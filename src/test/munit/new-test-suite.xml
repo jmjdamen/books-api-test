@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration" mock-connectors="false" mock-inbounds="false"/>
+    <spring:beans>
+        <spring:import resource="classpath:books-api.xml"/>
+    </spring:beans>
+    <munit:test name="new-test-suite-patch:/books/{bookID}:books-api-configTest" description="Test">
+        <flow-ref name="patch:/books/{bookID}:books-api-config" doc:name="Flow-ref to patch:/books/{bookID}:books-api-config"/>
+        <munit:assert-null doc:name="Assert Null Payload"/>
+    </munit:test>
+    <munit:test name="new-test-suite-get:/books/{bookID}:books-api-configTest" description="Test">
+        <flow-ref name="get:/books/{bookID}:books-api-config" doc:name="Flow-ref to get:/books/{bookID}:books-api-config"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+</mule>

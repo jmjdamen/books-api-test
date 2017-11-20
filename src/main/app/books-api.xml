@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+    <http:listener-config name="books-api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="books-api-config" raml="books-api.raml" consoleEnabled="false" doc:name="Router"/>
+<!--     <api-platform-gw:api apiName="groupId:5a4d2007-15aa-4d89-8cf8-5c712afff9c3:assetId:books-api" version="v1:5825605" flowRef="books-api-main" create="true" apikitRef="books-api-config" doc:name="API Autodiscovery">
+        <api-platform-gw:description>This is the demo Books API</api-platform-gw:description>
+    </api-platform-gw:api> -->
+    <flow name="books-api-main">
+        <http:listener config-ref="books-api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="books-api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="books-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="books-api-console">
+        <http:listener config-ref="books-api-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="books-api-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="delete:/books/{bookID}:books-api-config">
+        <set-payload value="#[NullPayload.getInstance()]" doc:name="Set Payload"/>
+    </flow>
+    <flow name="patch:/books/{bookID}:books-api-config">
+        <set-payload value="#[NullPayload.getInstance()]" doc:name="Set Payload"/>
+    </flow>
+    <flow name="get:/books:books-api-config">
+        <set-payload value="#[NullPayload.getInstance()]" doc:name="Set Payload"/>
+    </flow>
+    <flow name="get:/books/{bookID}:books-api-config">
+        <set-payload value="{&#xA;  &quot;id&quot;: 1,&#xA;  &quot;title&quot;: &quot;API Design&quot;,&#xA;  &quot;author&quot;: &quot;Mr Writer&quot;,&#xA;  &quot;ISBN&quot;: 263918239890812&#xA;}" doc:name="Set Payload"/>
+        <logger message="This is book ID #[flowVars.bookID]" level="INFO" category="com.corralict.books-service" doc:name="Logger"/>
+    </flow>
+    <flow name="post:/books:books-api-config">
+        <set-payload value="#[NullPayload.getInstance()]" doc:name="Set Payload"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="books-api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

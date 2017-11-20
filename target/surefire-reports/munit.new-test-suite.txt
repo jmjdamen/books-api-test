@@ -1,0 +1,6 @@
+SUCCESS - Test new-test-suite-get:/books/{bookID}:books-api-configTest finished Successfully.
+SUCCESS - Test new-test-suite-patch:/books/{bookID}:books-api-configTest finished Successfully.
+
+=============================================================================
+Tests run: 2 - Failures: 0 - Errors: 0 - Skipped: 0 - Time elapsed: 1.689 sec
+=============================================================================

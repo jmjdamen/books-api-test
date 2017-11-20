@@ -1,0 +1,39 @@
+#%RAML 1.0
+title: Books API
+
+types:
+  Book: !include datatypes/book.raml
+
+/books:
+  get:
+    description: Retrieve all books
+    queryParameters: 
+      genre?:
+      ISBN?:
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: Book[]
+  post:
+    description: Create new book
+
+  /{bookID}:
+    get:
+      description: Retrieve a single book
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "title": "API Design",
+                  "author": "Mr Writer",
+                  "ISBN": 263918239890812
+                }
+    patch:
+      description: Update book details
+    delete:
+      description: Delete book
+    
